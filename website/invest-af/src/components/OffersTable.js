@@ -1,11 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 
 
 export class OffersTable extends React.Component{
@@ -70,7 +68,7 @@ export class OffersTable extends React.Component{
                         <TableCell align="right">{row.ville}</TableCell>
                         <TableCell align="right">{row.prix}</TableCell>
                         <TableCell align="right">{parseFloat(row.prix_m2).toFixed(2)}</TableCell>
-                        <TableCell align="right"><a href={row.annonce} target="_blank">Annonce </a></TableCell>
+                        <TableCell align="right"><a href={row.annonce} target="_blank" rel="noopener noreferrer">Annonce </a></TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
