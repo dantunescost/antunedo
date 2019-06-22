@@ -1,0 +1,37 @@
+swagger: '2.0'
+info:
+  description: This is an API to get real estate offers.
+  version: 1.0.0
+  title: Invest AF API
+  termsOfService: 'http://invest-af.com'
+  contact:
+    email: contact@invest-af.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Offers
+    description: Get informations about the best offers.
+paths:
+  /getOffers:
+    get:
+      tags:
+        - Offers
+      summary: Outputs the offers sorted from best to worst by default
+      description: ''
+      operationId: api.get_offers
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: city
+          description: the location of the offers
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
