@@ -107,6 +107,8 @@ venv.bak/
 */.DS_Store
 **/.DS_Store
 
-.idea/
-*/.idea/
-**/.idea/
+.idea/*
+*/.idea/*
+**/.idea/*
+
+api/config/*
