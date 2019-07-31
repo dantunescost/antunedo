@@ -1,14 +1,14 @@
 import React from 'react';
 import './App.css';
-import { NavBar } from './components/NavBar';
-import { OffersTable } from './components/OffersTable';
+//import { NavBar } from './components/NavBar';
+import { Login } from './components/Login.js';
+//import { OffersTable } from './components/OffersTable';
 
 class App extends React.Component{
   render() {
     return (
       <div>
-        <NavBar></NavBar>
-        <OffersTable />
+        <Login />
       </div>
     );
   }

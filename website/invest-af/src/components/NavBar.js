@@ -9,7 +9,7 @@ export class NavBar extends React.Component{
 			<div>
 				<AppBar position="static">
 					<Toolbar>
-						<Typography variant="title" color="inherit">
+						<Typography variant="subtitle1" color="inherit">
 							Invest projet
 						</Typography>
 					</Toolbar>
