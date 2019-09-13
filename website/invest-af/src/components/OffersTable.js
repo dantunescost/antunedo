@@ -4,47 +4,38 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import axios from 'axios';
 
 
 export class OffersTable extends React.Component{
-    state = {
-        offers: [
-            {
-                id: 1,
-                titre: "donnée de test 1",
-                ville: "Luxembourg",
-                prix: 300000,
-                prix_m2: 8700.4,
-                annonce: "https://www.athome.lu/vente/bureau/luxembourg/id-6341686.html"
-            },
-            {
-                id: 2,
-                titre: "donnée de test 2",
-                ville: "Bruges",
-                prix: 400000,
-                prix_m2: 5900.4,
-                annonce: "https://www.athome.lu/vente/bureau/luxembourg/id-6341686.html"
-            },
-            {
-                id: 3,
-                titre: "donnée de test 3",
-                ville: "Faro",
-                prix: 467000,
-                prix_m2: 9800.6943523,
-                annonce: "https://www.athome.lu/vente/bureau/luxembourg/id-6341686.html"
-            },
-            {
-                id: 4,
-                titre: "donnée de test 4",
-                ville: "Cabeça de cabra",
-                prix: 670000,
-                prix_m2: 5900.43,
-                annonce: "https://www.athome.lu/vente/bureau/luxembourg/id-6341686.html"
-            }
-        ] 
+    constructor(props){
+        super(props);
+        this.state = {offers: []};
+        this.getOffers = this.getOffers.bind(this);
+    }
+
+    getOffers() {
+        var self = this;
+        axios.get('http://127.0.0.1:8080/getOffers', {headers: {"Access-Control-Allow-Origin": "*"}})
+            .then(function (response) {
+                self.setState({offers: response.data});
+            }).catch(function (error) {
+                if (error.response) {
+                  console.log(error.response.headers);
+                } 
+                else if (error.request) {
+                  console.log(error.request);
+                } 
+                else {
+                  console.log(error);
+                  console.log(error.message);
+                }
+                console.log(error.config);
+            });
     }
 
 	render() {
+        this.getOffers();
 		return (
 			<div style={{width: "70%", margin: "0 auto"}}>
                 <Table >
@@ -60,15 +51,13 @@ export class OffersTable extends React.Component{
                     </TableHead>
                     <TableBody>
                     {this.state.offers.map(row => (
-                        <TableRow key={row.id}>
-                        <TableCell component="th" scope="row">
-                            {row.id}
-                        </TableCell>
-                        <TableCell align="right">{row.titre}</TableCell>
-                        <TableCell align="right">{row.ville}</TableCell>
-                        <TableCell align="right">{row.prix}</TableCell>
-                        <TableCell align="right">{parseFloat(row.prix_m2).toFixed(2)}</TableCell>
-                        <TableCell align="right"><a href={row.annonce} target="_blank" rel="noopener noreferrer">Annonce </a></TableCell>
+                        <TableRow key={this.state.offers.indexOf(row)}>
+                            <TableCell component="th" scope="row">{row.id}</TableCell>
+                            <TableCell align="right">{row.title}</TableCell>
+                            <TableCell align="right">{row.city}</TableCell>
+                            <TableCell align="right">{row.price}</TableCell>
+                            <TableCell align="right">{parseFloat(row.price_per_m2).toFixed(2)}</TableCell>
+                            <TableCell align="right"><a href={row.url} target="_blank" rel="noopener noreferrer">Annonce </a></TableCell>
                         </TableRow>
                     ))}
                     </TableBody>
