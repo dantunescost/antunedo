@@ -10,12 +10,14 @@ def get_time_string(timestamp):
 
 def add_fields_to_offer(offer, timestamp, avg_collection):
     offer['insertion_time'] = timestamp
+    # Check if fields exist and compute price per square meter
     if 'property' in offer and 'characteristic' in offer['property'] \
             and 'property_surface' in offer['property']['characteristic'] \
             and 'price' in offer \
             and offer['property']['characteristic']['property_surface'] > 10 \
             and offer['price'] > 10000:
         offer['price_by_m2'] = offer['price'] / offer['property']['characteristic']['property_surface']
+        # Check if fields exist and get average price for similar goods and compute ratio to average price
         if 'property' in offer and 'immotype' in offer['property'] and 'id' in offer['property']['immotype'] \
                 and 'geo' in offer and 'city' in offer['geo']:
             average_price = avg_collection.find_one({
