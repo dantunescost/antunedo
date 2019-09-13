@@ -1,6 +1,7 @@
 #!/usr/bin python3.7
 # -*- coding: utf-8 -*-
 import time
+from random import randint
 
 from lib.mongoConnector import connect_to_mongodb, get_last_maradona_execution
 from lib.queryBuilder import last_inserted_offers
