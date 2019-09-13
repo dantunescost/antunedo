@@ -8,6 +8,7 @@ from lib.utils import add_fields_to_offer
 
 
 def sniffer():
+    time.sleep(randint(0, 10))
     begin_time = time.time()
     client = connect_to_mongodb()
     offers_collection = client['antunedo']['offers']

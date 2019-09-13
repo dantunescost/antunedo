@@ -51,7 +51,7 @@ def compute_average_prices():
         },
         {
             '$match': {
-                'price_by_m2': {'$exists': True}
+                'price_by_m2': {'$exists': True, '$gte': 100, '$lt': 30000}
             }
         },
         {
@@ -114,6 +114,34 @@ def compute_ratio_to_average_price():
                 collection.update_one({'id': offer['id']}, {'$set': {'ratio_to_average_price': magic_ratio}})
 
     print("\nComputing took {0:.2f}".format(time.time() - start) + " secs\n")
+    client.close()
+
+
+def compute_properties_used_to_calculate_average():
+    start = time.time()
+    client = connect_to_mongodb()
+    collection = client['antunedo']['offers']
+    avg_collection = client['antunedo']['average_prices']
+    cpt = 0
+    avg_prices = avg_collection.find()
+    for i in avg_prices:
+        print(cpt)
+        cpt += 1
+        collection.update_many(
+            {
+                'ratio_to_average_price': {'$exists': True},
+                'properties_used_to_calculate_average': {'$exists': False},
+                'property.immotype.id': i['immo_type_id'],
+                'geo.city': i['city']
+            },
+            {
+                '$set': {
+                    'properties_used_to_calculate_average': i['amount_of_properties']
+                }
+            }
+        )
+
+    print("\nComputing of average prices took {0:.2f}".format(time.time() - start) + " secs\n")
     client.close()
 
 
