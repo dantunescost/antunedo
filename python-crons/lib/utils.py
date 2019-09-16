@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from mongoConnector import connect_to_mongodb
-from slack_alerts import send_slack_alert
+from lib.slack_alerts import send_slack_alert
 
 
 def get_time_string(timestamp):
