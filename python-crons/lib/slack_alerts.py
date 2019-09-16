@@ -1,18 +1,23 @@
+import configparser
+import os
 import time
 
 import slack
 
-token = "xoxp-631514766916-620592331859-753712754641-47ae8f220bc6fb86591961d3812e79e4"
+path = os.path.dirname(os.path.abspath(__file__))
+config = configparser.ConfigParser()
+config.read(path + '''/../config/configuration.cfg''')
+
+token = config['SLACK']['token']
 slack_client = slack.WebClient(token=token)
 
 
 def send_slack_alert(channel, title, url, price, surface, price_per_m2, country, city, magic_ratio, photo_url):
     attachments = [
         {
-            "fallback": "Required plain-text summary of the attachment.",
+            "fallback": "Offer alert.",
             "color": "#0346ff",
-            "title": title + " avec un prix inférieur à de la moyenne du marché à été "
-                     "détectée",
+            "title": title,
             "title_link": url,
             "fields": [
                 {

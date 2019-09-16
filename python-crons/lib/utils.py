@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from lib.slack_alerts import send_slack_alert
+from mongoConnector import connect_to_mongodb
+from slack_alerts import send_slack_alert
 
 
 def get_time_string(timestamp):
@@ -34,7 +35,7 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                 offer['properties_used_to_calculate_average'] = average_price['amount_of_properties']
                 if offer['properties_used_to_calculate_average'] >= 5:
                     try:
-                        url = "athome.lu" + offer['meta']['permalink']['fr']
+                        url = "https://athome.lu" + offer['meta']['permalink']['fr']
                     except KeyError:
                         url = ""
                     try:
@@ -54,7 +55,7 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     except KeyError:
                         country = ""
                     try:
-                        photo_url = "athome.lu" + offer['media']['items'][0]['uri']
+                        photo_url = offer['config']['urlPicture'] + offer['config']['layout']['path_picture'] + offer['media']['items'][0]['uri']
                     except KeyError:
                         photo_url = ""
                     try:
