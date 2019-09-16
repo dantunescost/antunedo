@@ -1,8 +1,14 @@
+import configparser
+import os
 import time
 
 import slack
 
-token = "xoxp-631514766916-620592331859-750723528643-d9c674ff3b004e7485c4e9aefd8396e8"
+path = os.path.dirname(os.path.abspath(__file__))
+config = configparser.ConfigParser()
+config.read(path + '''/../config/configuration.cfg''')
+
+token = config['SLACK']['token']
 slack_client = slack.WebClient(token=token)
 
 
