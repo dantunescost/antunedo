@@ -50,7 +50,7 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     except KeyError:
                         city = " ville inconnue"
                     try:
-                        country = offer['geo']['city']
+                        country = offer['geo']['country']
                     except KeyError:
                         country = ""
                     try:
