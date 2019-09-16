@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+from lib.slack_alerts import send_slack_alert
+
 
 def get_time_string(timestamp):
     date_obj = datetime.fromtimestamp(timestamp)
@@ -30,3 +32,47 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     3
                 )
                 offer['properties_used_to_calculate_average'] = average_price['amount_of_properties']
+                if offer['properties_used_to_calculate_average'] >= 5:
+                    try:
+                        url = "athome.lu" + offer['meta']['permalink']['fr']
+                    except KeyError:
+                        url = ""
+                    try:
+                        immo_type = offer['immotype']
+                    except KeyError:
+                        immo_type = "Bien inconnu"
+                    try:
+                        bedrooms = offer['characteristic']['bedrooms_count']
+                    except KeyError:
+                        bedrooms = 0
+                    try:
+                        city = offer['geo']['city']
+                    except KeyError:
+                        city = " ville inconnue"
+                    try:
+                        country = offer['geo']['city']
+                    except KeyError:
+                        country = ""
+                    try:
+                        photo_url = "athome.lu" + offer['media']['items'][0]['uri']
+                    except KeyError:
+                        photo_url = ""
+                    try:
+                        surface = offer['characteristic']['property_surface']
+                    except KeyError:
+                        surface = 0
+                    title = immo_type + " " + str(bedrooms) + " chambres à " + city
+                    try:
+                        price = offer['price']
+                    except KeyError:
+                        price = 0
+                    if offer['ratio_to_average_price'] < -50:
+                        send_slack_alert("#alertes_niv_1", title, url, price, surface, offer['price_by_m2'], country,
+                                         city, offer['ratio_to_average_price'], photo_url)
+                        pass
+                    elif offer['ratio_to_average_price'] < -30:
+                        send_slack_alert("#alertes_niv_2", title, url, price, surface, offer['price_by_m2'], country,
+                                         city, offer['ratio_to_average_price'], photo_url)
+                    elif offer['ratio_to_average_price'] < -10:
+                        send_slack_alert("#alertes_niv_3", title, url, price, surface, offer['price_by_m2'], country,
+                                         city, offer['ratio_to_average_price'], photo_url)
