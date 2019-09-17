@@ -32,7 +32,8 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     3
                 )
                 offer['properties_used_to_calculate_average'] = average_price['amount_of_properties']
-                if offer['properties_used_to_calculate_average'] >= 5:
+                # Send Slack alerts
+                if offer['properties_used_to_calculate_average'] >= 5 and offer['geo']['country'] == "lu":
                     try:
                         url = "https://athome.lu" + offer['meta']['permalink']['fr']
                     except KeyError:
@@ -54,7 +55,8 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     except KeyError:
                         country = ""
                     try:
-                        photo_url = offer['config']['urlPicture'] + offer['config']['layout']['path_picture'] + offer['media']['items'][0]['uri']
+                        photo_url = offer['config']['urlPicture'] + offer['config']['layout']['path_picture'] \
+                                    + offer['media']['items'][0]['uri']
                     except KeyError:
                         photo_url = ""
                     try:
