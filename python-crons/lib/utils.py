@@ -57,7 +57,7 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     try:
                         photo_url = offer['config']['urlPicture'] + offer['config']['layout']['path_picture'] \
                                     + offer['media']['items'][0]['uri']
-                    except KeyError:
+                    except (KeyError, IndexError):
                         photo_url = ""
                     try:
                         surface = offer['characteristic']['property_surface']
