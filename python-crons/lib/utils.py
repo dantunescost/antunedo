@@ -1,12 +1,14 @@
 #!/usr/bin python3.7
 # -*- coding: utf-8 -*-
 from datetime import datetime
+import pytz
 
 from lib.slack_alerts import send_slack_alert
 
 
 def get_time_string(timestamp):
-    date_obj = datetime.fromtimestamp(timestamp)
+    tz = pytz.timezone('Europe/Luxembourg')
+    date_obj = datetime.fromtimestamp(timestamp, tz)
     return date_obj.strftime("%Y%m%dT%H%M%SZ")
 
 
@@ -33,7 +35,8 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                 )
                 offer['properties_used_to_calculate_average'] = average_price['amount_of_properties']
                 # Send Slack alerts
-                if offer['properties_used_to_calculate_average'] >= 5 and offer['geo']['country'] == "lu":
+                if offer['properties_used_to_calculate_average'] >= 5:
+                    city = ""
                     try:
                         url = "https://athome.lu" + offer['meta']['permalink']['fr']
                     except KeyError:
@@ -48,12 +51,11 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                         bedrooms = 0
                     try:
                         city = offer['geo']['city']
+                        if city == "Luxembourg":
+                            city += "-" + offer['completeGeoInfos']['levels']['L10']
                     except KeyError:
-                        city = " ville inconnue"
-                    try:
-                        country = offer['geo']['country']
-                    except KeyError:
-                        country = ""
+                        if not city:
+                            city = " ville inconnue"
                     try:
                         photo_url = offer['config']['urlPicture'] + offer['config']['layout']['path_picture'] \
                                     + offer['media']['items'][0]['uri']
@@ -63,18 +65,31 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                         surface = offer['characteristic']['property_surface']
                     except KeyError:
                         surface = 0
-                    title = immo_type + " " + str(bedrooms) + " chambres à " + city
+                    try:
+                        country = offer['geo']['country']
+                        if 'completeGeoInfos' in offer and 'levels' in offer['completeGeoInfos'] and \
+                                'L2' in offer['completeGeoInfos']['levels']:
+                            country = offer['completeGeoInfos']['levels']['L2']
+                    except KeyError:
+                        country = ""
+                    title = immo_type + " " + str(bedrooms) + " bedrooms in " + city
+                    if country not in ["lu", "Luxembourg"]:
+                        title += ", " + country
                     try:
                         price = offer['price']
                     except KeyError:
                         price = 0
-                    if offer['ratio_to_average_price'] < -50:
-                        send_slack_alert("#alertes_niv_1", title, url, price, surface, offer['price_by_m2'], country,
-                                         city, offer['ratio_to_average_price'], photo_url)
-                        pass
-                    elif offer['ratio_to_average_price'] < -30:
-                        send_slack_alert("#alertes_niv_2", title, url, price, surface, offer['price_by_m2'], country,
-                                         city, offer['ratio_to_average_price'], photo_url)
-                    elif offer['ratio_to_average_price'] < -10:
-                        send_slack_alert("#alertes_niv_3", title, url, price, surface, offer['price_by_m2'], country,
+                    alert_channel = ""
+                    if offer['geo']['country'] == "lu":
+                        if offer['ratio_to_average_price'] < -50:
+                            alert_channel = "#alertes_niv_1"
+                        elif offer['ratio_to_average_price'] < -25:
+                            alert_channel = "#alertes_niv_2"
+                        elif offer['ratio_to_average_price'] < -15:
+                            alert_channel = "#alertes_niv_3"
+                        if offer['ratio_to_average_price'] < -15:
+                            send_slack_alert(alert_channel, title, url, price, surface, offer['price_by_m2'], country,
+                                             city, offer['ratio_to_average_price'], photo_url)
+                    else:
+                        send_slack_alert("alertes_etranger", title, url, price, surface, offer['price_by_m2'], country,
                                          city, offer['ratio_to_average_price'], photo_url)
