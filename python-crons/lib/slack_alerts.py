@@ -12,7 +12,8 @@ token = config['SLACK']['token']
 slack_client = slack.WebClient(token=token)
 
 
-def send_slack_alert(channel, title, url, price, surface, price_per_m2, country, city, magic_ratio, photo_url):
+def send_slack_alert(channel, title, url, price, surface, price_per_m2, offer_id, amount_of_offer_for_average,
+                     magic_ratio, photo_url):
     attachments = [
         {
             "fallback": "Offer alert.",
@@ -39,7 +40,30 @@ def send_slack_alert(channel, title, url, price, surface, price_per_m2, country,
                     "title": "Ratio / prix du marché",
                     "value": "{0:.2f}".format(magic_ratio) + " %",
                     "short": True
-                }],
+                },
+                {
+                    "title": "Identifiant",
+                    "value": str(offer_id),
+                    "short": True
+                },
+                {
+                    "title": "Pertinence de la moyenne",
+                    "value": str(amount_of_offer_for_average) + " biens utilisés",
+                    "short": True
+                }
+            ],
+            "actions": [
+                {
+                    "type": "button",
+                    "text": "Lien vers offre :house_with_garden:",
+                    "url": "https://www.athome.lu/en/buy/apartment/alzingen/id-6549728.html"
+                },
+                {
+                    "type": "button",
+                    "text": "Lien PDF :inbox_tray:",
+                    "url": "https://www.athome.lu/annonce/downloadpdf/id/" + str(offer_id) + "/format/portrait/lang/fr"
+                }
+            ],
             "thumb_url": photo_url,
             "footer": "Invest-AF ",
             "footer_icon": "https://i2.wp.com/www.andreasreiterer.at/wp-content/uploads/2017/11/"
@@ -47,18 +71,6 @@ def send_slack_alert(channel, title, url, price, surface, price_per_m2, country,
             "ts": int(time.time())
         }
     ]
-    if country != "":
-        attachments[0]['fields'].append({
-            "title": "Pays",
-            "value": country,
-            "short": True
-        })
-    if country != " ville inconnue":
-        attachments[0]['fields'].append({
-            "title": "Ville",
-            "value": city,
-            "short": True
-        })
     slack_client.chat_postMessage(
         channel=channel,
         attachments=attachments
