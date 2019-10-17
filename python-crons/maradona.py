@@ -25,17 +25,16 @@ def sniffer():
     while page < total_pages and page < 501:
         next_page, total_pages = last_inserted_offers(page, last_exec_time)
         for offer in next_page:
-            print(cpt)
             if offers_collection.find_one({'id': offer['id']}) is not None:
                 already_added_cpt += 1
-                print('Already added')
             else:
                 new_offers_cpt += 1
                 add_fields_to_offer(offer, int(begin_time), avg_collection)
                 offers_collection.insert_one(offer)
-                print('New offer')
+                print('New offer : ' + str(offer['id']))
             cpt += 1
         page += 1
+    print(str(cpt) + " offers were sniffed, " + str(new_offers_cpt) + " are new offers.")
     logs_collection.insert_one({
         "start_time": int(begin_time),
         "already_added_offers": already_added_cpt,
