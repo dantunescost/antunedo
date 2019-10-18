@@ -56,7 +56,7 @@ def send_slack_alert(channel, title, url, price, surface, price_per_m2, offer_id
                 {
                     "type": "button",
                     "text": "Lien vers offre :house_with_garden:",
-                    "url": "https://www.athome.lu/en/buy/apartment/alzingen/id-6549728.html"
+                    "url": url
                 },
                 {
                     "type": "button",
