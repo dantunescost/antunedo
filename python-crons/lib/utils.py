@@ -88,8 +88,10 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                         elif offer['ratio_to_average_price'] < -15:
                             alert_channel = "#alertes_niv_3"
                         if offer['ratio_to_average_price'] < -15:
-                            send_slack_alert(alert_channel, title, url, price, surface, offer['price_by_m2'], country,
-                                             city, offer['ratio_to_average_price'], photo_url)
+                            send_slack_alert(alert_channel, title, url, price, surface, offer['price_by_m2'],
+                                             offer['id'], offer['properties_used_to_calculate_average'],
+                                             offer['ratio_to_average_price'], photo_url)
                     elif offer['ratio_to_average_price'] < -25:
-                        send_slack_alert("alertes_etranger", title, url, price, surface, offer['price_by_m2'], country,
-                                         city, offer['ratio_to_average_price'], photo_url)
+                        send_slack_alert("alertes_etranger", title, url, price, surface, offer['price_by_m2'],
+                                         offer['id'], offer['properties_used_to_calculate_average'],
+                                         offer['ratio_to_average_price'], photo_url)
