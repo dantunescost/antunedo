@@ -13,7 +13,7 @@ slack_client = slack.WebClient(token=token)
 
 
 def send_slack_alert(channel, title, url, price, surface, price_per_m2, offer_id, amount_of_offer_for_average,
-                     magic_ratio, photo_url):
+                     average_pertinence, magic_ratio, photo_url, maps_link):
     attachments = [
         {
             "fallback": "Offer alert.",
@@ -48,7 +48,7 @@ def send_slack_alert(channel, title, url, price, surface, price_per_m2, offer_id
                 },
                 {
                     "title": "Pertinence de la moyenne",
-                    "value": str(amount_of_offer_for_average) + " biens utilisés",
+                    "value": str(amount_of_offer_for_average) + " biens, pertinence : " + str(average_pertinence),
                     "short": True
                 }
             ],
@@ -71,6 +71,12 @@ def send_slack_alert(channel, title, url, price, surface, price_per_m2, offer_id
             "ts": int(time.time())
         }
     ]
+    if maps_link:
+        attachments[0]['actions'].append({
+            "type": "button",
+            "text": "Lien Maps :round_pushpin:",
+            "url": maps_link
+        })
     slack_client.chat_postMessage(
         channel=channel,
         attachments=attachments
