@@ -1,5 +1,6 @@
 #!/usr/bin python3.7
 # -*- coding: utf-8 -*-
+import sys
 import time
 from random import randint
 
@@ -8,20 +9,18 @@ from lib.queryBuilder import last_inserted_offers
 from lib.utils import add_fields_to_offer
 
 
-def sniffer():
+def sniffer(last_exec_time, mongo_client):
     time.sleep(randint(0, 10))
     begin_time = time.time()
-    client = connect_to_mongodb()
-    offers_collection = client['antunedo']['offers']
-    logs_collection = client['antunedo']['logs']
-    avg_collection = client['antunedo']['average_prices']
+    offers_collection = mongo_client['antunedo']['offers']
+    logs_collection = mongo_client['antunedo']['logs']
+    avg_collection = mongo_client['antunedo']['average_prices']
 
     page = 1
     cpt = 0
     already_added_cpt = 0
     new_offers_cpt = 0
     total_pages = 501
-    last_exec_time = get_last_maradona_execution(client)
     while page < total_pages and page < 501:
         next_page, total_pages = last_inserted_offers(page, last_exec_time)
         for offer in next_page:
@@ -41,10 +40,15 @@ def sniffer():
         "new_offers": new_offers_cpt,
         "duration": round(time.time() - begin_time, 2)
     })
-
-    client.close()
     return
 
 
 if __name__ == "__main__":
-    sniffer()
+    client = connect_to_mongodb()
+    if len(sys.argv) > 1:
+        timespan = int(time.time()) - int(sys.argv[1])
+    else:
+        timespan = get_last_maradona_execution(client) - 3600
+    sniffer(timespan, client)
+
+    client.close()
