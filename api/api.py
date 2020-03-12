@@ -6,15 +6,26 @@ from lib.mongoConnector import connect_to_mongodb, query_offers
 from flask_cors import CORS
 
 
-def get_offers(city=None, nb_offers=20):
+# Getting the best offers
+def get_offers(country=None, city=None, nb_offers=20):
     client = connect_to_mongodb()
     if city is not None:
         print('Filter by city')
 
-    result = query_offers(client, nb_offers)
+    result = query_offers(client, country, nb_offers)
 
     client.close()
     return result
+
+
+# Function checking if user credentials are valid to connect to invest-af.com
+def connect_admin(username, password):
+    client = connect_to_mongodb()
+    collection = client['antunedo']['admin_users']
+    is_valid = collection.find_one({'username': username, 'password': password})
+    client.close()
+    return is_valid is not None
+
 
 ########################################################################################################################
 

@@ -64,6 +64,7 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                     3
                 )
                 offer['properties_used_to_calculate_average'] = average_price['amount_of_properties']
+                offer['average_price_pertinence_level'] = average_price['priority_level']
                 # Send Slack alerts
                 if offer['properties_used_to_calculate_average'] >= 5:
                     city = ""

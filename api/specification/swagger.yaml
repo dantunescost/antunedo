@@ -12,8 +12,10 @@ info:
 tags:
   - name: Offers
     description: Get informations about the best offers.
+  - name: Sessions
+    description: Managing admin user sessions.
 paths:
-  /getOffers:
+  /offers:
     get:
       tags:
         - Offers
@@ -30,8 +32,41 @@ paths:
           description: the location of the offers
           required: false
           type: string
+        - in: query
+          name: country
+          description: the location of the offers
+          required: false
+          type: array
+          items:
+            type: string
       responses:
         '200':
           description: successful operation
         '405':
           description: Invalid input
+  /sessions:
+    post:
+      tags:
+        - Sessions
+      summary: Checks if authentification is valid and returns boolean telling
+        wether the user is connected or not.
+      description: ''
+      operationId: api.connect_admin
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: username
+          description: the admin's username
+          required: true
+          type: string
+        - in: query
+          name: password
+          description: the admin's password
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
