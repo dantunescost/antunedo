@@ -11,7 +11,7 @@ def compute_average_prices():
     collection = client['antunedo']['offers']
     avg_collection = client['antunedo']['average_prices']
 
-    # Get level 1 averages
+    # Get level 1 averages (simple)
     avg_prices = level_1_averages(collection)
     print("Level 1")
     for i in avg_prices:
@@ -49,7 +49,7 @@ def compute_average_prices():
                     }
                 )
 
-    # Get level 2 averages
+    # Get level 2 averages (ch)
     avg_prices = level_2_averages(collection)
     print("Level 2")
     for i in avg_prices:
@@ -90,7 +90,7 @@ def compute_average_prices():
                     }
                 )
 
-    # Get level 3 averages
+    # Get level 3 averages (quartier)
     avg_prices = level_3_averages(collection)
     print("Level 3")
     for i in avg_prices:
@@ -131,7 +131,7 @@ def compute_average_prices():
                     }
                 )
 
-    # Get level 4 averages
+    # Get level 4 averages (ch + quartier)
     avg_prices = level_4_averages(collection)
     print("Level 4")
     for i in avg_prices:
