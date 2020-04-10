@@ -4,7 +4,7 @@
 import configparser
 import os
 
-from pymongo import MongoClient, DESCENDING
+from pymongo import MongoClient, DESCENDING, ASCENDING
 
 path = os.path.dirname(os.path.abspath(__file__))
 config = configparser.ConfigParser()
@@ -18,18 +18,29 @@ def connect_to_mongodb():
     return client
 
 
-def query_offers(client, country, limit_offers):
+def query_offers(client, geolocation, price_filter, surface_filter, ground_surface_filter, price_per_m2_filter,
+                 price_per_are_filter, magic_ratio_filter, sort, sort_order, limit_offers):
     collection = client['antunedo']['offers']
+    field_to_sort_by, direction = convert_sort_instructions(sort, sort_order)
     results = []
-    if country is not None:
-        query = collection.find({'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': {'$in': country}})\
-                    .sort([("insertion_time", DESCENDING)]) \
-                    .limit(limit_offers)
-    else:
-        query = collection.find({'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu'}) \
-            .sort([("insertion_time", DESCENDING)]) \
-            .limit(limit_offers)
-
+    query = collection.find({**{'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu'},
+                             **geolocation,
+                             **price_filter,
+                             **surface_filter,
+                             **ground_surface_filter,
+                             **price_per_m2_filter,
+                             **price_per_are_filter,
+                             **magic_ratio_filter}) \
+                .sort([(field_to_sort_by, direction)]) \
+                .limit(limit_offers)
+    print({**{'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu'},
+                             **geolocation,
+                             **price_filter,
+                             **surface_filter,
+                             **ground_surface_filter,
+                             **price_per_m2_filter,
+                             **price_per_are_filter,
+                             **magic_ratio_filter})
     for i in query:
         try:
             insertion_date = int(i['insertion_time'])
@@ -121,3 +132,132 @@ def query_offers(client, country, limit_offers):
             "price_per_are": price_per_are
         })
     return results
+
+
+def convert_sort_instructions(sort, sort_order):
+    if sort is None:
+        return 'insertion_time', DESCENDING
+    else:
+        switcher = {
+            'date': 'insertion_time',
+            'city': 'geo.city',
+            'price': 'price',
+            'surface': 'characteristic.property_surface',
+            'prixPerM2': 'price_by_m2',
+            'groundSurface': 'characteristic.ground_surface',
+            'prixPerAre': 'price_per_are',
+            'ratio': 'ratio_to_average_price'
+        }
+        field = switcher.get(sort, 'insertion_time')
+        return field, DESCENDING if sort_order == 'desc' else ASCENDING
+
+
+def geolocation_enumerations(client):
+    collection = client['antunedo']['offers']
+    cities = []
+    iterator = collection.aggregate([
+        {
+            '$group': {
+                '_id': {
+                    'type': 'city',
+                    'name': '$geo.city',
+                    'country': '$geo.country'
+                }
+            }
+        },
+        {
+            '$sort': {
+                '_id.name': 1
+            }
+        },
+        {
+            '$group': {
+                '_id': None,
+                'cities': {'$push': '$_id'}
+            }
+        },
+    ])
+    for i in iterator:
+        cities = i['cities']
+        break
+    countries = []
+    iterator = collection.aggregate([
+        {
+            '$group': {
+                '_id': {
+                    'type': 'country',
+                    'name': '$geo.country',
+                    'country': '$geo.country'
+                }
+            }
+        },
+        {
+            '$sort': {
+                '_id.name': 1
+            }
+        },
+        {
+            '$group': {
+                '_id': None,
+                'countries': {'$push': '$_id'}
+            }
+        },
+    ])
+    for i in iterator:
+        countries = i['countries']
+        break
+    regions_and_other = []
+    iterator = collection.aggregate([
+        {
+            '$project': {
+                'pays': '$geo.country',
+                'completeGeoInfos.levels.L4': 1,
+                'completeGeoInfos.levels.L5': 1,
+                'completeGeoInfos.levels.L7': 1,
+                'completeGeoInfos.levels.L10': 1,
+            }
+        },
+        {
+            '$project': {
+                'pays': 1,
+                'levels': {'$objectToArray': '$completeGeoInfos.levels'}
+            }
+        },
+        {
+            '$unwind': '$levels'
+        },
+        {
+            '$group': {
+                '_id': {
+                    'type': '$levels.k',
+                    'length': {'$strLenCP': '$levels.k'},
+                    'name': '$levels.v',
+                    'country': '$pays'
+                }
+            }
+        },
+        {
+            '$sort': {
+                '_id.length': 1,
+                '_id.type': 1,
+                '_id.name': 1
+            }
+        },
+        {
+            '$project': {
+                '_id.type': 1,
+                '_id.name': 1,
+                '_id.country': 1
+            }
+        },
+        {
+            '$group': {
+                '_id': None,
+                'regions_and_other': {'$push': '$_id'}
+            }
+        }
+    ])
+    for i in iterator:
+        regions_and_other = i['regions_and_other']
+        break
+    return countries + cities[3:] + regions_and_other

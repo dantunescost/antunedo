@@ -16,7 +16,7 @@ tags:
     description: Managing admin user sessions.
 paths:
   /offers:
-    get:
+    post:
       tags:
         - Offers
       summary: Outputs the offers sorted from best to worst by default
@@ -27,18 +27,94 @@ paths:
       produces:
         - application/json
       parameters:
+        - in: body
+          name: geolocation
+          description: the locations the offers should be filtered by
+          required: false
+          schema:
+            $ref: '#/definitions/geolocationArray'
         - in: query
-          name: city
-          description: the location of the offers
+          name: priceMin
+          description: the minimum price that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: priceMax
+          description: the maximum price that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: surfaceMin
+          description: the minimum surface that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: surfaceMax
+          description: the maximum surface that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: groundSurfaceMin
+          description: the minimum ground surface that the returned offers should have
+          required: false
+          type: number
+        - in: query
+          name: groundSurfaceMax
+          description: the maximum ground surface that the returned offers should have
+          required: false
+          type: number
+        - in: query
+          name: pricePerM2Min
+          description: the minimum price per m2 that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: pricePerM2Max
+          description: the maximum price per m2 that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: pricePerAreMin
+          description: the minimum price per are that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: pricePerAreMax
+          description: the maximum price per are that the returned offers should have
+          required: false
+          type: integer
+        - in: query
+          name: magicRatioMin
+          description: the minimum magic ratio that the returned offers should have
+          required: false
+          type: number
+        - in: query
+          name: magicRatioMax
+          description: the maximum magic ratio that the returned offers should have
+          required: false
+          type: number
+        - in: query
+          name: sort
+          description: the field by whom the offers should be ordered by
           required: false
           type: string
+          enum:
+            - date
+            - city
+            - price
+            - surface
+            - pricePerM2
+            - groundSurface
+            - pricePerAre
+            - ratio
         - in: query
-          name: country
-          description: the location of the offers
+          name: sortOrder
+          description: the field by whom the offers should be ordered by
           required: false
-          type: array
-          items:
-            type: string
+          type: string
+          enum:
+            - asc
+            - desc
       responses:
         '200':
           description: successful operation
@@ -70,3 +146,29 @@ paths:
       responses:
         '200':
           description: successful operation
+  /geolocation/options:
+    get:
+      tags:
+        - Offers
+      summary: Function returning every single possible geolocation
+      description: ''
+      operationId: api.geolocation_options
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+definitions:
+  geolocationArray:
+    type: array
+    items:
+      type: object
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        country:
+          type: string

@@ -54,6 +54,12 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                 avg_price_aggregator[0]['$match']['bedrooms_count'] = {
                     '$in': [offer['characteristic']['bedrooms_count'], None]
                 }
+            if 'characteristic' in offer and 'ground_surface' in offer['characteristic'] and \
+                    offer['characteristic']['ground_surface'] != 0:
+                offer['price_per_are'] = offer['price'] / offer['characteristic']['ground_surface']
+                avg_price_aggregator[0]['$match']['bedrooms_count'] = {
+                    '$in': [offer['characteristic']['bedrooms_count'], None]
+                }
             avg_price_cursor = avg_collection.aggregate(avg_price_aggregator)
             for i in avg_price_cursor:
                 average_price = i
@@ -139,18 +145,19 @@ def add_fields_to_offer(offer, timestamp, avg_collection):
                         print("\nALERT !\n")
 
 
-def compute_price_per_square_meter_for_all():
+def compute_price_per_are_meter_for_all():
     start = time.time()
     client = connect_to_mongodb()
     collection = client['antunedo']['offers']
 
     res = collection.find(
         {
-            'property.characteristic.property_surface': {'$exists': True, '$gt': 10},
-            'price': {'$exists': True, '$gt': 10000}
+            'characteristic.ground_surface': {'$exists': True, '$gt': 0},
+            'price': {'$exists': True, '$gt': 10000},
+            'price_by_are': {'$exists': False}
         },
         {
-            'property.characteristic.property_surface': 1,
+            'characteristic.ground_surface': 1,
             'id': 1,
             'price': 1
         }
@@ -159,10 +166,10 @@ def compute_price_per_square_meter_for_all():
     cpt = 0
     for i in res:
         if cpt % 50 == 0:
-            print("Processing tracking data... " + "{0:.2f}".format((cpt / 26849) * 100) + "% in "
+            print("Processing tracking data... " + "{0:.2f}".format((cpt / 37958) * 100) + "% in "
                   + "{0:.2f}".format(time.time() - start) + " secs", end='\r')
-        price_by_m2 = i['price'] / i['property']['characteristic']['property_surface']
-        collection.update_one({'id': i['id']}, {'$set': {'price_by_m2': price_by_m2}})
+        price_by_m2 = i['price'] / i['characteristic']['ground_surface']
+        collection.update_one({'id': i['id']}, {'$set': {'price_by_are': price_by_m2}})
         cpt += 1
 
     client.close()
