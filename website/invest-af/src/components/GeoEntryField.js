@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
-import countries from '../data/countries'
+import countries from '../data/countries';
+import https from 'https';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
@@ -33,7 +34,10 @@ const GeoEntryField = (props) => {
 
     useEffect(() => {
         const geoOptionsUri = process.env.REACT_APP_GEO_OPTIONS_URI
-        axios.get(geoOptionsUri)
+        const agent = new https.Agent({  
+            rejectUnauthorized: false
+          });
+        axios.get(geoOptionsUri, { httpsAgent: agent })
             .then(function (response) {
                 setOptions(response.data);
             }).catch(function (error) {
