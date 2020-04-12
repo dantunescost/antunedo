@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Route, Redirect } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-export default function RouteWrapper({
+export default function PrivateRoute({
     component: Component,
     isPrivate,
     ...rest
@@ -32,7 +32,6 @@ export default function RouteWrapper({
     */
     return (<Route 
         {...rest}
-        path="/dashboard" 
         render={props => {
             if (signed){
                 return <Component {...props} />;
@@ -47,11 +46,11 @@ export default function RouteWrapper({
         }
     } />);
 }
-RouteWrapper.propTypes = {
+PrivateRoute.propTypes = {
     isPrivate: PropTypes.bool,
     component: PropTypes.oneOfType([PropTypes.element, PropTypes.func])
     .isRequired,
 };
-RouteWrapper.defaultProps = {
+PrivateRoute.defaultProps = {
     isPrivate: false,
 };
