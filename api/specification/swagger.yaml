@@ -3,12 +3,15 @@ info:
   description: This is an API to get real estate offers.
   version: 1.0.0
   title: Invest AF API
-  termsOfService: 'http://invest-af.com'
+  termsOfService: 'https://invest-af.com'
   contact:
     email: contact@invest-af.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+schemes:
+  - "https"
+  - "http"
 tags:
   - name: Offers
     description: Get informations about the best offers.
