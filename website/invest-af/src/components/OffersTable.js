@@ -177,7 +177,8 @@ function OffersTable() {
             sort: orderBy,
             sortOrder: order
         }
-        axios.post('http://127.0.0.1:8080/offers', geolocations, {params: parameters})
+        const offersUri = process.env.REACT_APP_OFFERS_URI
+        axios.post(offersUri, geolocations, {params: parameters})
             .then(function (response) {
                 setOffers(response.data);
             }).catch(function (error) {

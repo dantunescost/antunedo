@@ -8,12 +8,6 @@ export default function RouteWrapper({
     isPrivate,
     ...rest
 }) {
-    /*const [signed, setSigned] = useState(false) ;
-    
-    useEffect(() => {
-        setSigned(Cookies.get('tao') === 'true')
-        console.log("Is cookie set :", Cookies.get('tao') === 'true')
-    }, [signed])*/
 
     const signed = Cookies.get('tao') === 'true'
     

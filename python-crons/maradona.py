@@ -4,7 +4,7 @@ import sys
 import time
 from random import randint
 
-from lib.mongoConnector import connect_to_mongodb, get_last_maradona_execution
+from lib.mongoConnector import connect_to_mongodb, get_last_maradona_execution, update_geographical_filter_options
 from lib.queryBuilder import last_inserted_offers
 from lib.utils import add_fields_to_offer
 
@@ -29,6 +29,7 @@ def sniffer(last_exec_time, mongo_client):
             else:
                 new_offers_cpt += 1
                 add_fields_to_offer(offer, int(begin_time), avg_collection)
+                update_geographical_filter_options(mongo_client, offer)
                 offers_collection.insert_one(offer)
                 print('New offer : ' + str(offer['id']))
             cpt += 1

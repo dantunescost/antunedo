@@ -153,6 +153,14 @@ def convert_sort_instructions(sort, sort_order):
 
 
 def geolocation_enumerations(client):
+    collection = client['antunedo']['geographical_filter_options']
+    result = []
+    for i in collection.find({}):
+        result += i['options']
+    return result
+
+
+def geolocation_enumerations_obsolete(client):
     collection = client['antunedo']['offers']
     cities = []
     iterator = collection.aggregate([

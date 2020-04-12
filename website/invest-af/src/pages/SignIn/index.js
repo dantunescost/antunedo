@@ -57,7 +57,6 @@ function SignIn(props) {
   const [password, setPassword] = useState('')
 
   const signIn = (u, p, e) => {
-    //const uri = 'http://localhost:8080/sessions' 
     const uri = process.env.REACT_APP_SIGN_IN_URI
     axios.post(`${uri}?username=${u}&password=${p}`)
       .then(response => {

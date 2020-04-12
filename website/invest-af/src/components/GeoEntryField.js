@@ -32,7 +32,8 @@ const GeoEntryField = (props) => {
     const classes = useStyles()
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8080/geolocation/options')
+        const geoOptionsUri = process.env.REACT_APP_GEO_OPTIONS_URI
+        axios.get(geoOptionsUri)
             .then(function (response) {
                 setOptions(response.data);
             }).catch(function (error) {
