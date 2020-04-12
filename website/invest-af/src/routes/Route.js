@@ -31,7 +31,8 @@ export default function RouteWrapper({
     * If not included on both previous cases, redirect user to the desired route.
     */
     return (<Route 
-        {...rest} 
+        {...rest}
+        path="/dashboard" 
         render={props => {
             if (signed){
                 return <Component {...props} />;

@@ -61,7 +61,7 @@ function SignIn(props) {
     axios.post(`${uri}?username=${u}&password=${p}`)
       .then(response => {
         if(response.data){
-            Cookies.set('tao', 'true')
+            Cookies.set('tao', 'true', { expires: 1/24 })
             props.history.push('/dashboard')
         }
         else {
