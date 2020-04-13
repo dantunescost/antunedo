@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import connexion
+import configparser
+import os
 from lib.mongoConnector import connect_to_mongodb, query_offers, geolocation_enumerations
 from lib.utils import convert_geolocation_for_query, convert_params_to_price_filter, convert_params_to_surface_filter, \
                       convert_params_to_ground_surface_filter, convert_params_to_price_per_m2_filter, \
@@ -53,6 +55,10 @@ app = connexion.App(__name__, specification_dir='./specification/')
 app.add_api('swagger.yaml')
 
 if __name__ == "__main__":
+    path = os.path.dirname(os.path.abspath(__file__))
+    config = configparser.ConfigParser()
+    config.read(path + '''/config/configuration.cfg''')
+
     application = app.app
     CORS(app.app)
-    app.run(port=8080)
+    app.run(port=config['API']['port'])
