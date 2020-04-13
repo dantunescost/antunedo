@@ -113,3 +113,6 @@ venv.bak/
 api/config/*
 
 api/nohup.out
+python-crons/average_logs.txt
+python-crons/logs.txt
+website/invest-af/.env.staging
