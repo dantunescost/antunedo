@@ -61,11 +61,11 @@ function SignIn(props) {
     axios.post(`${uri}?username=${u}&password=${p}`)
       .then(response => {
         if(response.data){
-            Cookies.set('tao', 'true', { expires: 1/24 })
+            Cookies.set('fb_2NyPcDJq15wTar35ZR', 'true', { expires: 1/24 })
             props.history.push('/dashboard')
         }
         else {
-            Cookies.set('tao', 'false')
+            Cookies.set('fb_2NyPcDJq15wTar35ZR', 'false')
             props.history.push('/')
         }
 
@@ -76,7 +76,7 @@ function SignIn(props) {
     e.preventDefault()
   }
 
-  if(Cookies.get('tao') === 'true'){
+  if(Cookies.get('fb_2NyPcDJq15wTar35ZR') === 'true'){
       return <Redirect to="/dashboard" />;
   }
 
