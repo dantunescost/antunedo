@@ -55,4 +55,4 @@ app.add_api('swagger.yaml')
 if __name__ == "__main__":
     application = app.app
     CORS(app.app)
-    app.run(port=8080, ssl_context='adhoc')
+    app.run(port=8081)
