@@ -9,9 +9,7 @@ export default function PrivateRoute({
     ...rest
 }) {
 
-    const signed = Cookies.get('tao') === 'true'
-    
-    // TODO : Add duration to cookie
+    const signed = Cookies.get('fb_2NyPcDJq15wTar35ZR') === 'true'
     
     /**
     * Redirect user to SignIn page if he tries to access a private route
