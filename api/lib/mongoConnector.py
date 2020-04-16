@@ -19,7 +19,7 @@ def connect_to_mongodb():
 
 
 def query_offers(client, geolocation, price_filter, surface_filter, ground_surface_filter, price_per_m2_filter,
-                 price_per_are_filter, magic_ratio_filter, sort, sort_order, limit_offers):
+                 price_per_are_filter, magic_ratio_filter, property_types_filter, sort, sort_order, limit_offers):
     collection = client['antunedo']['offers']
     field_to_sort_by, direction = convert_sort_instructions(sort, sort_order)
     results = []
@@ -30,7 +30,8 @@ def query_offers(client, geolocation, price_filter, surface_filter, ground_surfa
                              **ground_surface_filter,
                              **price_per_m2_filter,
                              **price_per_are_filter,
-                             **magic_ratio_filter}) \
+                             **magic_ratio_filter,
+                             **property_types_filter}) \
                 .sort([(field_to_sort_by, direction)]) \
                 .limit(limit_offers)
     print({**{'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu'},
@@ -40,7 +41,9 @@ def query_offers(client, geolocation, price_filter, surface_filter, ground_surfa
                              **ground_surface_filter,
                              **price_per_m2_filter,
                              **price_per_are_filter,
-                             **magic_ratio_filter})
+                             **magic_ratio_filter,
+                             **property_types_filter})
+    print([(field_to_sort_by, direction)])
     for i in query:
         try:
             insertion_date = int(i['insertion_time'])
@@ -143,13 +146,29 @@ def convert_sort_instructions(sort, sort_order):
             'city': 'geo.city',
             'price': 'price',
             'surface': 'characteristic.property_surface',
-            'prixPerM2': 'price_by_m2',
+            'pricePerM2': 'price_by_m2',
             'groundSurface': 'characteristic.ground_surface',
-            'prixPerAre': 'price_per_are',
+            'pricePerAre': 'price_per_are',
             'ratio': 'ratio_to_average_price'
         }
         field = switcher.get(sort, 'insertion_time')
         return field, DESCENDING if sort_order == 'desc' else ASCENDING
+
+
+def property_type_enumerations(client):
+    collection = client['antunedo']['offers']
+    result = []
+    p_types_cursor = collection.aggregate([
+        {
+            '$group': {
+                '_id': None,
+                'property_types': {'$addToSet': '$property.immotype.label'}
+            }
+        }
+    ])
+    for i in p_types_cursor:
+        result += i['property_types']
+    return result
 
 
 def geolocation_enumerations(client):

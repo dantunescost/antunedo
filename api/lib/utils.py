@@ -61,11 +61,11 @@ def convert_params_to_price_per_are_filter(price_per_are_min, price_per_are_max)
     if price_per_are_min == 0 and price_per_are_max == 1000000:
         return {}
     elif price_per_are_min == 0:
-        return {'price_by_are': {'$lte': price_per_are_max}}
+        return {'price_per_are': {'$lte': price_per_are_max}}
     elif price_per_are_max == 1000000:
-        return {'price_by_are': {'$gte': price_per_are_min}}
+        return {'price_per_are': {'$gte': price_per_are_min}}
     else:
-        return {'price_by_are': {'$lte': price_per_are_max, '$gte': price_per_are_min}}
+        return {'price_per_are': {'$lte': price_per_are_max, '$gte': price_per_are_min}}
 
 
 def convert_params_to_magic_ratio_filter(magic_ratio_min, magic_ratio_max):
@@ -77,3 +77,10 @@ def convert_params_to_magic_ratio_filter(magic_ratio_min, magic_ratio_max):
         return {'ratio_to_average_price': {'$gte': magic_ratio_min}}
     else:
         return {'ratio_to_average_price': {'$lte': magic_ratio_max, '$gte': magic_ratio_min}}
+
+
+def convert_params_to_property_types_filter(property_types):
+    if not property_types:
+        return {}
+    else:
+        return {'property.immotype.label': {'$in': property_types}}

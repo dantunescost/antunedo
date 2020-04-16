@@ -24,6 +24,7 @@ import MagicRatioSlider from './MagicRatioSlider';
 import Paper from "@material-ui/core/Paper";
 import TablePaginationActions from './TablePaginationActions';
 import axios from 'axios';
+import PropertyTypeField from './PropertyTypeField';
 
 
 const useStyles = makeStyles({
@@ -113,6 +114,7 @@ function OffersTable() {
 
     const [offers, setOffers] = useState([])
     const [geolocations, setGeolocations] = useState([{type: "country", name: "lu", country: "lu"}])
+    const [propertyTypes, setPropertyTypes] = useState([])
     const [orderBy, setOrderBy] = useState('date')
     const [order, setOrder] = useState('desc')
     const [price, setPrice] = React.useState([0, 48]);
@@ -174,6 +176,7 @@ function OffersTable() {
             pricePerAreMax: pricePerAre[1],
             magicRatioMin: scaleMagicRatio(magicRatio[0]),
             magicRatioMax: scaleMagicRatio(magicRatio[1]),
+            propertyTypes: propertyTypes,
             sort: orderBy,
             sortOrder: order
         }
@@ -260,11 +263,16 @@ function OffersTable() {
         <div style={{width: "90%", margin: "0 auto"}}>
             <div style={{display: 'flex', marginTop: 25, marginBottom: 15}}>
                 <Grid container className={classes.root} spacing={2}>
-                    <Grid item xs={12}>
-                        <GeoEntryField onChangeFunc={setGeolocations} />
+                    <Grid container direction='row'>
+                        <Grid item xs={8} lg={6} style={{paddingRight: 20}}>
+                            <GeoEntryField onChangeFunc={setGeolocations} />
+                        </Grid>
+                        <Grid item xs={8} lg={6}>
+                            <PropertyTypeField onChangeFunc={setPropertyTypes} />
+                        </Grid>
                     </Grid>
 
-                    <Grid container direction='row'>
+                    <Grid container direction='row' style={{marginTop: 20}}>
                         <Grid item xs={8} lg={6} key={1} style={{paddingLeft: 20}}>
                             <PriceSlider price={price} handlePriceChange={handlePriceChange} scaleFunc={scalePrice}/>
                         </Grid>

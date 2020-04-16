@@ -154,7 +154,7 @@ def compute_price_per_are_meter_for_all():
         {
             'characteristic.ground_surface': {'$exists': True, '$gt': 0},
             'price': {'$exists': True, '$gt': 10000},
-            'price_by_are': {'$exists': False}
+            'price_per_are': {'$exists': False}
         },
         {
             'characteristic.ground_surface': 1,
@@ -169,7 +169,7 @@ def compute_price_per_are_meter_for_all():
             print("Processing tracking data... " + "{0:.2f}".format((cpt / 37958) * 100) + "% in "
                   + "{0:.2f}".format(time.time() - start) + " secs", end='\r')
         price_by_m2 = i['price'] / i['characteristic']['ground_surface']
-        collection.update_one({'id': i['id']}, {'$set': {'price_by_are': price_by_m2}})
+        collection.update_one({'id': i['id']}, {'$set': {'price_per_are': price_by_m2}})
         cpt += 1
 
     client.close()
@@ -231,3 +231,7 @@ def compute_properties_used_to_calculate_average():
 
     print("\nComputing of average prices took {0:.2f}".format(time.time() - start) + " secs\n")
     client.close()
+
+
+if __name__ == "__main__":
+    compute_price_per_are_meter_for_all()

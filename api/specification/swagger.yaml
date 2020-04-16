@@ -97,6 +97,13 @@ paths:
           required: false
           type: number
         - in: query
+          name: propertyTypes
+          description: the property types that the returned offers should have
+          required: false
+          type: array
+          items:
+            type: string
+        - in: query
           name: sort
           description: the field by whom the offers should be ordered by
           required: false
@@ -156,6 +163,20 @@ paths:
       summary: Function returning every single possible geolocation
       description: ''
       operationId: api.geolocation_options
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: successful operation
+  /property/types:
+    get:
+      tags:
+        - Offers
+      summary: Function returning every single possible property type
+      description: ''
+      operationId: api.property_types
       consumes:
         - application/json
       produces:
