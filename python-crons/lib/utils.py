@@ -16,6 +16,7 @@ def get_time_string(timestamp):
 
 def add_fields_to_offer(offer, timestamp, avg_collection):
     offer['insertion_time'] = timestamp
+    offer['is_online'] = True
     # Check if fields exist and compute price per square meter
     if 'property' in offer and 'characteristic' in offer['property'] \
             and 'property_surface' in offer['property']['characteristic'] \
