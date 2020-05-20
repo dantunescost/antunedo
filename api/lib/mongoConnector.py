@@ -23,7 +23,7 @@ def query_offers(client, geolocation, price_filter, surface_filter, ground_surfa
     collection = client['antunedo']['offers']
     field_to_sort_by, direction = convert_sort_instructions(sort, sort_order)
     results = []
-    query = collection.find({**{'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu'},
+    query = collection.find({**{'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu', 'is_online': True},
                              **geolocation,
                              **price_filter,
                              **surface_filter,
@@ -34,16 +34,6 @@ def query_offers(client, geolocation, price_filter, surface_filter, ground_surfa
                              **property_types_filter}) \
                 .sort([(field_to_sort_by, direction)]) \
                 .limit(limit_offers)
-    print({**{'ratio_to_average_price': {'$lt': -14.9}, 'geo.country': 'lu'},
-                             **geolocation,
-                             **price_filter,
-                             **surface_filter,
-                             **ground_surface_filter,
-                             **price_per_m2_filter,
-                             **price_per_are_filter,
-                             **magic_ratio_filter,
-                             **property_types_filter})
-    print([(field_to_sort_by, direction)])
     for i in query:
         try:
             insertion_date = int(i['insertion_time'])
