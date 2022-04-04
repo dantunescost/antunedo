@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteRule ^.*$ / [L,QSA]
+
+    RewriteEngine On
+    RewriteCond %{SERVER_PORT} !=443
+    RewriteRule ^(.*)$ https://invest-af.com/$1 [R=301,L]
+</IfModule>

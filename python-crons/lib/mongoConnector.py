@@ -63,3 +63,41 @@ def get_last_maradona_execution(client):
     for i in res:
         result = i['start_time']
     return result
+
+
+def update_geographical_filter_options(client, offer):
+    collection = client['antunedo']['geographical_filter_options']
+    if 'geo' in offer:
+        if 'country' in offer['geo']:
+            collection.update_one(
+                {'type': 'countries'},
+                {
+                    '$addToSet': {
+                        'options': {'type': 'country', 'name': offer['geo']['country'], 'country': offer['geo']['country']}
+                    }
+                }
+            )
+        if 'city' in offer['geo']:
+            collection.update_one(
+                {'type': 'cities'},
+                {
+                    '$addToSet': {
+                        'options': {'type': 'city', 'name': offer['geo']['city'], 'country': offer['geo']['country']}
+                    }
+                }
+            )
+    if 'completeGeoInfos' in offer and 'levels' in offer['completeGeoInfos']:
+        for key in offer['completeGeoInfos']['levels']:
+            if key in ['L4', 'L5', 'L7', 'L10']:
+                collection.update_one(
+                    {'type': 'others'},
+                    {
+                        '$addToSet': {
+                            'options': {
+                                'type': key,
+                                'name': offer['completeGeoInfos']['levels'][key],
+                                'country': offer['geo']['country']
+                            }
+                        }
+                    }
+                )

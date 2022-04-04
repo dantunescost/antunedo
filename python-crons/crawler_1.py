@@ -31,7 +31,7 @@ if __name__ == "__main__":
         print("\nNouvel Immotype : " + immotype + ", avec un total de " + str(total_pages) + " pages\n\n")
         if total_pages > 1000:
             # TODO : filter this immo category into smaller elements
-            print('DEAAAAAD')
+            print('DEAAAAAD    ---    immotype ID : ' + immotype + '\n\n')
         elif total_pages > 500:
             get_offers_by_immotype(collection, immotype, total_pages)
             # TODO : test if total_pages - 500 if right

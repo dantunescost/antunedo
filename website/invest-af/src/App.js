@@ -1,17 +1,15 @@
 import React from 'react';
+import { Router } from 'react-router-dom';
+import history from './services/history';
+import Routes from './routes';
 import './App.css';
-//import { NavBar } from './components/NavBar';
-import { Login } from './components/Login.js';
-//import { OffersTable } from './components/OffersTable';
 
-class App extends React.Component{
-  render() {
-    return (
-      <div>
-        <Login />
-      </div>
-    );
-  }
+function App() {
+  return (
+    <Router history={history}>
+      <Routes />
+    </Router>
+  );
 }
 
 export default App;
